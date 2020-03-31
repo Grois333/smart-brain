@@ -3,6 +3,8 @@ import Particles from 'react-particles-js';
 import "./App.css";
 import Clarifai from 'clarifai';
 import FaceRecognition from "./Components/FaceRecognition/FaceRecognition";
+import Register from "./Components/Register/Register";
+import Signin from "./Components/Signin/Signin";
 import Navigation from "./Components/Navigation/Navigation";
 import Logo from "./Components/Logo/Logo";
 import ImageLinkForm from "./Components/ImageLinkForm/ImageLinkForm";
@@ -38,7 +40,11 @@ class App extends Component {
 
       input: '',
       imageUrl: '',
-      box: ''
+      box: '',
+
+      //To Route the between signin forms and dashboard
+      route: 'signin',
+      isSignedIn: false
 
     }
   }
@@ -69,7 +75,7 @@ class App extends Component {
 
   displayFaceBox = (box) => {
 
-    console.log(box);
+    //console.log(box);
 
     this.setState({box: box});
   }
@@ -101,7 +107,27 @@ class App extends Component {
 
   }
 
+  
+  //Function to Change Routes from Signin and Home Dashboard
+  onRouteChange = (route) => {
+
+    if (route === 'signout') {
+
+      this.setState({isSignedIn: false});
+
+    } else if (route === 'home') {
+
+      this.setState({isSignedIn: true});
+    }
+
+    this.setState({route: route});
+  }
+
   render() {
+
+    //Destructuring our states instead of using this.state
+    const { isSignedIn, imageUrl, route, box} = this.state;
+
     return (
       <div className="App">
 
@@ -110,15 +136,41 @@ class App extends Component {
           params={particlesOptions}
 
         />
-        <Navigation />
 
-        <Logo />
+        <Navigation isSignedIn={isSignedIn} onRouteChange={this.onRouteChange}/>
 
-        <Rank />
 
-        <ImageLinkForm onInputChange={this.onInputChange} onButtonSubmit={this.onButtonSubmit} />
+        { /* Jsx Javascript expression to know when to change the route */
 
-        <FaceRecognition box={this.state.box} imageUrl={this.state.imageUrl} />
+         route === 'home' ? //if this is true then route to home dashboard 
+
+             <div>
+
+                <Logo />
+
+                <Rank />
+
+                <ImageLinkForm onInputChange={this.onInputChange} onButtonSubmit={this.onButtonSubmit} />
+
+                <FaceRecognition box={box} imageUrl={imageUrl} />
+
+             </div>
+
+           : (   //else if route is Signin go to Signin
+
+             route === 'signin' ?
+
+             <Signin onRouteChange={this.onRouteChange} />
+
+           :
+
+             //else return the route to Register
+
+             <Register onRouteChange={this.onRouteChange} />
+           )
+              
+
+        }
 
       </div>
     );
