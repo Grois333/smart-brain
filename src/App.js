@@ -11,7 +11,7 @@ import Rank from "./Components/Rank/Rank";
 
 const app = new Clarifai.App({
   apiKey: 'fd2a805864b54d84baae0f7a3e6cd060'
- });
+});
 
 const particlesOptions = {
 
@@ -31,22 +31,57 @@ const particlesOptions = {
 
 class App extends Component {
 
-  constructor(){
+  constructor() {
     super();
 
     this.state = {
 
       input: '',
-      imageUrl: ''
+      imageUrl: '',
+      box: ''
 
     }
   }
 
+  claculateFaceLocation = (data) => {
+
+    const clarifaiFace =  data.outputs[0].data.regions[0].region_info.bounding_box;
+
+    const image = document.getElementById('inputimage');
+
+    const width = Number(image.width);
+
+    const height = Number(image.height);
+
+    //console.log(width, height);
+   
+    //We return the object Bounding Box with our calculations based on the face
+    return {
+
+      leftCol: clarifaiFace.left_col * width,
+      topRow: clarifaiFace.top_row * height,
+      rightCol: width - (clarifaiFace.right_col * width),
+      bottomRow: height - (clarifaiFace.bottom_row * height)
+
+    }
+
+  }
+
+  displayFaceBox = (box) => {
+
+    console.log(box);
+
+    this.setState({box: box});
+  }
+
+
+
+
   onInputChange = (event) => {
-    
+
     //console.log(event.target.value);
 
-    this.setState({input:event.target.value});
+    this.setState({ input: event.target.value });
 
   }
 
@@ -54,42 +89,40 @@ class App extends Component {
 
     //console.log('click');
 
-    this.setState({imageUrl: this.state.input});
+    this.setState({ imageUrl: this.state.input });
 
-    app.models.predict(Clarifai.FACE_DETECT_MODEL, this.state.input).then(
-    function(response) {
+    app.models.predict(Clarifai.FACE_DETECT_MODEL, this.state.input)
 
       // do something with response
-      console.log(response.outputs[0].data.regions[0].region_info.bounding_box);
-    },
-    function(err) {
-      // there was an error
-    }
-  );
+      //console.log(response.outputs[0].data.regions[0].region_info.bounding_box);
+
+      .then(response => this.displayFaceBox(this.claculateFaceLocation(response)))
+      .catch(err => console.log(err));
+
   }
 
   render() {
-  return (
-    <div className="App">
+    return (
+      <div className="App">
 
-      <Particles 
-              className="particles"
-              params={particlesOptions}
-              
-            />
-      <Navigation />
+        <Particles
+          className="particles"
+          params={particlesOptions}
 
-       <Logo />
+        />
+        <Navigation />
 
-       <Rank />
+        <Logo />
 
-      <ImageLinkForm onInputChange={this.onInputChange} onButtonSubmit={this.onButtonSubmit} />
+        <Rank />
 
-      <FaceRecognition imageUrl={this.state.imageUrl} /> 
+        <ImageLinkForm onInputChange={this.onInputChange} onButtonSubmit={this.onButtonSubmit} />
 
-    </div>
-  );
-}
+        <FaceRecognition box={this.state.box} imageUrl={this.state.imageUrl} />
+
+      </div>
+    );
+  }
 
 }
 
