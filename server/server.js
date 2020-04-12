@@ -23,6 +23,8 @@ const app = express();
 
 app.use(bodyParser.json());
 
+const bcrypt = require('bcrypt-nodejs');
+
 
 //Object variable to store a testing database of users with Postman
 const database = {
@@ -33,7 +35,7 @@ const database = {
             id: '123',
             name: 'John',
             email: 'john@gmail.com',
-            password: 'cookies',
+            //password: 'cookies',
             entries: 0,
             joined: new Date()
         },
@@ -43,9 +45,18 @@ const database = {
             id: '124',
             name: 'Sally',
             email: 'sally@gmail.com',
-            password: 'bananas',
+            //password: 'bananas',
             entries: 0,
             joined: new Date()
+        }
+    ],
+
+    login: [
+
+        {
+            id: '987',
+            hash: '',
+            email: 'john@gmail.com'
         }
     ]
 }
@@ -67,6 +78,21 @@ app.post('/signin', (req, res) => {
 
     // res.json('signin');
 
+
+    // Load hash from your password DB.
+    bcrypt.compare('cookies', hash, function(err, res) {
+
+        // result == true
+        console.log('first guess', res);
+    });
+
+    bcrypt.compare('veggies', hash, function(err, res) {
+
+        // result == false
+        console.log('second guess', res);
+    });
+
+
     //Testing users database (with Postman)
     if (req.body.email === database.users[0].email && req.body.password === database.users[0].password) {
         res.json('success');
@@ -83,6 +109,13 @@ app.post('/register', (req, res) => {
 
     //Destructure the request from the body
     const { email, name, password } = req.body;
+
+    // //Hashing the password with bcrypt
+    // bcrypt.hash(password, null, null, function(err, hash) {
+
+    //     // Store hash in your password DB.
+    //     console.log(hash);
+    // });
 
     //Create testing user (Test with Postman)
     database.users.push({
