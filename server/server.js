@@ -51,6 +51,7 @@ const database = {
 }
 
 
+//Root Route
 app.get('/', (req, res) => {
 
     // res.send('this is working');
@@ -59,18 +60,22 @@ app.get('/', (req, res) => {
     res.send(database.users);
 })
 
+
+
 //Check the input from the frontend sign in from with the user data from the database
 app.post('/signin', (req, res) => {
 
     // res.json('signin');
 
-    //Testing users database with Postman
+    //Testing users database (with Postman)
     if (req.body.email === database.users[0].email && req.body.password === database.users[0].password) {
         res.json('success');
     } else {
         res.status(400).json('error login in');
     }
 })
+
+
 
 
 //Check input from the frontend register form with the data in the database, insert the data in the database
@@ -91,6 +96,61 @@ app.post('/register', (req, res) => {
 
     })
     res.json(database.users[database.users.length -1]);
+})
+
+
+
+
+//Profile params Route
+app.get('/profile/:id', (req, res)=> {
+
+    const { id } = req.params;
+
+    let found = false;
+
+    //Loop the users in the database to find them (Test with Postman)
+    database.users.forEach(user => {
+
+        if (user.id === id) {
+
+            found = true;
+
+            return res.json(user);
+
+        } 
+    })
+    if (!found){
+
+        res.status(400).json('not found');
+    }
+})
+
+
+
+//Image entries Route
+app.put('/image', (req, res) => {
+
+    const { id } = req.body;
+
+    let found = false;
+
+    //Loop the users in the database to find them (Test with Postman), Increase the entries
+    database.users.forEach(user => {
+
+        if (user.id === id) {
+
+            found = true;
+
+            user.entries++
+
+            return res.json(user.entries);
+
+        } 
+    })
+    if (!found){
+
+        res.status(400).json('not found');
+    }
 })
 
 
