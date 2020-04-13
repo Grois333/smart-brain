@@ -102,8 +102,14 @@ app.post('/signin', (req, res) => {
 
 
     //Testing user John in database (with Postman)
+    // if (req.body.email === database.users[0].email && req.body.password === database.users[0].password) {
+    //     res.json('success');
+    // } else {
+    //     res.status(400).json('error login in');
+    // }
+
     if (req.body.email === database.users[0].email && req.body.password === database.users[0].password) {
-        res.json('success');
+        res.json(database.users[0]);
     } else {
         res.status(400).json('error login in');
     }

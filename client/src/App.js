@@ -145,7 +145,26 @@ class App extends Component {
       // do something with response
       //console.log(response.outputs[0].data.regions[0].region_info.bounding_box);
 
-      .then(response => this.displayFaceBox(this.claculateFaceLocation(response)))
+      .then(response => {
+
+        if (response) {
+
+          fetch('http://localhost:3001/image', {
+            method: 'put',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                id: this.state.user.id
+            })
+          })
+          .then(response => response.json())
+          .then(count => {
+            //Keep current user
+            this.setState(Object.assign(this.state.user, {entries: count}))
+          })
+        }
+
+        this.displayFaceBox(this.claculateFaceLocation(response))
+      })
       .catch(err => console.log(err));
 
   }
@@ -191,7 +210,7 @@ class App extends Component {
 
                 <Logo />
 
-                <Rank />
+                <Rank name={this.state.user.name} entries={this.state.user.entries} />
 
                 <ImageLinkForm onInputChange={this.onInputChange} onButtonSubmit={this.onButtonSubmit} />
 
@@ -203,7 +222,7 @@ class App extends Component {
 
              route === 'signin' ?
 
-             <Signin onRouteChange={this.onRouteChange} />
+             <Signin loadUser={this.loadUser} onRouteChange={this.onRouteChange} />
 
            :
 
