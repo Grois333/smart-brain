@@ -11,7 +11,9 @@ class Signin extends React.Component {
 
             signInEmail: '',
 
-            signInPassword: ''
+            signInPassword: '',
+
+            notRegister: ''
         }
     }
 
@@ -58,6 +60,8 @@ class Signin extends React.Component {
           if(user.id){
             this.props.loadUser(user);
             this.props.onRouteChange('home');
+          } else {
+            this.setState({notRegister: 'You are not registered'});
           }
         })
 
@@ -78,19 +82,29 @@ class Signin extends React.Component {
                         <legend className="f1 fw6 ph0 mh0">Sign In</legend>
                         <div className="mt3">
                             <label className="db fw6 lh-copy f6" htmlFor="email-address">Email</label>
-                            <input className="pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100" type="email" name="email-address" id="email-address" onChange={this.onEmailChange} />
+                            <input className="pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100" type="email" name="email-address" id="email-address" placeholder="Enter your email" onChange={this.onEmailChange} onKeyPress={event => {
+                            if (event.key === 'Enter' && event.target.value.trim() > 0) {
+                              this.onSubmitSignIn()
+                            }
+                        }} />
                         </div>
                         <div className="mv3">
                             <label className="db fw6 lh-copy f6" htmlFor="password">Password</label>
-                            <input className="b pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100" type="password" name="password" id="password" onChange={this.onPasswordChange} />
+                            <input className="b pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100" type="password" name="password" id="password" placeholder="Enter your password" onChange={this.onPasswordChange} onKeyPress={event => {
+                             if (event.key === 'Enter' && event.target.value.trim() > 0) {
+                               this.onSubmitSignIn()
+                               }
+                            }} />
                         </div>
                         {/* <label className="pa0 ma0 lh-copy f6 pointer"><input type="checkbox" /> Remember me</label> */}
                     </fieldset>
                     <div className="">
-                        <input onClick={ this.onSubmitSignIn } className="b ph3 pv2 input-reset ba b--black bg-transparent grow pointer f6 dib" type="submit" value="Sign in" />
+                        <input onClick={ this.onSubmitSignIn } className="b ph3 pv2 input-reset ba b--black bg-transparent grow pointer f6 dib" type="submit" value="Sign in" disabled={(this.state.signInEmail === "" || this.state.signInPassword === "") ? true : false } onClick={this.onSubmitSignIn} />
                     </div>
                     <div className="lh-copy mt3">
                         <p onClick={ () => onRouteChange('register')}  className="f6 link dim black db pointer">Register</p>
+                        {(this.state.signInEmail === "" || this.state.signInPassword === "") ? <div className="emptyFiledMsg"><span>Empty Fields</span></div> : null }
+                       <div className="emptyFiledMsg2"><span>{this.state.notRegister}</span></div>
                         {/* <a href="#0" className="f6 link dim black db">Forgot your password?</a> */}
                     </div>
                 </div>

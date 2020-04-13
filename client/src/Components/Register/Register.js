@@ -1,5 +1,13 @@
 import React from 'react';
 
+import './Register.css';
+
+
+//RegEx to validate Email
+const validEmailRegex = RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
+
+
+
 //Recieve the onRouteChange Prop from App.js
 class Register extends React.Component {
 
@@ -13,7 +21,9 @@ class Register extends React.Component {
 
             password: '',
 
-            name: ''
+            name: '',
+
+            notRegister: ''
         }
     }
 
@@ -56,14 +66,16 @@ class Register extends React.Component {
         .then(response => response.json())
         .then(user => {
 
-            if (user) {
+            if (user.id) {
 
                 //Load new user
                 this.props.loadUser(user)
 
                 //Change the route to home
                 this.props.onRouteChange('home') 
-            } 
+            } else {
+                this.setState({notRegister: 'Already registered'});
+              }
         })
 
         
@@ -84,20 +96,24 @@ class Register extends React.Component {
                         <legend className="f1 fw6 ph0 mh0">Register</legend>
                         <div className="mt3">
                             <label className="db fw6 lh-copy f6" htmlFor="name">Name</label>
-                            <input className="pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100" type="text" name="name" id="name" onChange={this.onNameChange} />
+                            <input className="pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100" type="text" name="name" id="name"  placeholder="Enter name (max 8 characters)" required onChange={this.onNameChange} />
                         </div>
                         <div className="mt3">
                             <label className="db fw6 lh-copy f6" htmlFor="email-address">Email</label>
-                            <input className="pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100" type="email" name="email-address" id="email-address" onChange={this.onEmailChange} />
+                            <input className="pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100" type="email" name="email-address" id="email-address" placeholder="Enter your email" required onChange={this.onEmailChange} />
                         </div>
                         <div className="mv3">
                             <label className="db fw6 lh-copy f6" htmlFor="password">Password</label>
-                            <input className="b pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100" type="password" name="password" id="password" onChange={this.onPasswordChange} />
+                            <input className="b pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100" type="password" name="password" id="password" placeholder="Enter your password" required onChange={this.onPasswordChange} />
                         </div>
                         {/* <label className="pa0 ma0 lh-copy f6 pointer"><input type="checkbox" /> Remember me</label> */}
                     </fieldset>
                     <div className="">
-                        <input onClick={ this.onSubmitSignIn } className="b ph3 pv2 input-reset ba b--black bg-transparent grow pointer f6 dib" type="submit" value="Register" />
+                        <input onClick={ this.onSubmitSignIn } className="b ph3 pv2 input-reset ba b--black bg-transparent grow pointer f6 dib" type="submit" value="Register" disabled={(this.state.name === "" || this.state.name.length > 8 || this.state.email === "" || !validEmailRegex.test(this.state.email) || this.state.password === "") ? true : false } />
+
+                        {(this.state.name === "" || this.state.name.length > 8 || this.state.email === "" || !validEmailRegex.test(this.state.email) || this.state.password === "") ? <div className="emptyInpMsg"><span>Incorrect Credentials</span></div> : null }
+                        <div className="emptyInpMsg" ><span>{this.state.notRegister}</span></div>
+
                     </div>
                 </div>
             </main>
