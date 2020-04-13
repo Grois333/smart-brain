@@ -19,11 +19,19 @@ const express = require('express');
 
 const bodyParser = require('body-parser');
 
+const bcrypt = require('bcrypt-nodejs');
+
+const cors = require('cors');
+
+
 const app = express();
 
 app.use(bodyParser.json());
 
-const bcrypt = require('bcrypt-nodejs');
+app.use(cors());
+
+
+
 
 
 //Object variable to store a testing database of users with Postman
@@ -35,7 +43,7 @@ const database = {
             id: '123',
             name: 'John',
             email: 'john@gmail.com',
-            //password: 'cookies',
+            password: 'cookies',
             entries: 0,
             joined: new Date()
         },
@@ -45,7 +53,7 @@ const database = {
             id: '124',
             name: 'Sally',
             email: 'sally@gmail.com',
-            //password: 'bananas',
+            password: 'bananas',
             entries: 0,
             joined: new Date()
         }
@@ -79,21 +87,21 @@ app.post('/signin', (req, res) => {
     // res.json('signin');
 
 
-    // Load hash from your password DB.
-    bcrypt.compare('cookies', hash, function(err, res) {
+    // // Load hash from your password DB.
+    // bcrypt.compare('cookies', hash, function(err, res) {
 
-        // result == true
-        console.log('first guess', res);
-    });
+    //     // result == true
+    //     console.log('first guess', res);
+    // });
 
-    bcrypt.compare('veggies', hash, function(err, res) {
+    // bcrypt.compare('veggies', hash, function(err, res) {
 
-        // result == false
-        console.log('second guess', res);
-    });
+    //     // result == false
+    //     console.log('second guess', res);
+    // });
 
 
-    //Testing users database (with Postman)
+    //Testing user John in database (with Postman)
     if (req.body.email === database.users[0].email && req.body.password === database.users[0].password) {
         res.json('success');
     } else {
@@ -188,6 +196,6 @@ app.put('/image', (req, res) => {
 
 
 
-app.listen(3000, ()=> {
-    console.log('app is running on port 3000')
+app.listen(3001, ()=> {
+    console.log('app is running on port 3001')
 })
