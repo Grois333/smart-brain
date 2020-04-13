@@ -11,10 +11,12 @@ import ImageLinkForm from "./Components/ImageLinkForm/ImageLinkForm";
 import Rank from "./Components/Rank/Rank";
 
 
+//Clarifai API KEY
 const app = new Clarifai.App({
   apiKey: 'fd2a805864b54d84baae0f7a3e6cd060'
 });
 
+//Background Particles
 const particlesOptions = {
 
   particles: {
@@ -44,9 +46,34 @@ class App extends Component {
 
       //To Route the between signin forms and dashboard
       route: 'signin',
-      isSignedIn: false
+      isSignedIn: false,
+
+      user: {
+
+        id: '',
+        name: '',
+        email: '',
+        entries: 0,
+        joined: ''
+
+      }
 
     }
+  }
+
+
+  //Function to load the user when register form is inputed(pass function to Register Component)
+  loadUser = (data) => {
+
+    this.setState({user: {
+
+      id: data.id,
+      name: data.name,
+      email: data.email,
+      entries: data.entries,
+      joined: data.joined
+
+    }})
   }
 
 
@@ -182,7 +209,7 @@ class App extends Component {
 
              //else return the route to Register
 
-             <Register onRouteChange={this.onRouteChange} />
+             <Register loadUser={this.loadUser} onRouteChange={this.onRouteChange} />
            )
               
 
