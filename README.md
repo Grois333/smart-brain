@@ -1,6 +1,6 @@
 ## Smart Brain App
 
-![alt text]()
+![alt text](https://raw.githubusercontent.com/Grois333/smart-brain/master/smartbrain.png)
 
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
