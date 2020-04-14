@@ -31,18 +31,11 @@ const particlesOptions = {
 }
 
 
-
-
-class App extends Component {
-
-  constructor() {
-    super();
-
-    this.state = {
+const initialState = {
 
       input: '',
       imageUrl: '',
-      box: '',
+      box: {},
 
       //To Route the between signin forms and dashboard
       route: 'signin',
@@ -58,7 +51,18 @@ class App extends Component {
 
       }
 
-    }
+}
+
+
+
+class App extends Component {
+
+  constructor() {
+    super();
+
+    this.state = initialState;
+
+      
   }
 
 
@@ -161,6 +165,7 @@ class App extends Component {
             //Keep current user
             this.setState(Object.assign(this.state.user, {entries: count}))
           })
+          .catch(console.log)
         }
 
         this.displayFaceBox(this.claculateFaceLocation(response))
@@ -175,7 +180,7 @@ class App extends Component {
 
     if (route === 'signout') {
 
-      this.setState({isSignedIn: false});
+      this.setState(initialState);
 
     } else if (route === 'home') {
 
